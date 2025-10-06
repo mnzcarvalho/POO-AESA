@@ -33,4 +33,6 @@ public abstract class Funcionario {
     public void setCpf(int cpf) {
         this.cpf = cpf;
     }
+
+    protected abstract double getSalario();
 }
