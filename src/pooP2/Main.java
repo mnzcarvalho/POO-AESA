@@ -8,6 +8,7 @@ import pooP2.model.Cliente;
 import pooP2.model.Loja;
 import pooP2.model.Pedido;
 import pooP2.model.Produto;
+import pooP2.util.ImportadorCSV;
 
 import java.util.*;
 import java.io.*;
@@ -24,7 +25,7 @@ public class Main {
     private static void exibirMenu() {
         int opcao;
         do {
-            System.out.println("\n=== LOJA TECH ===");
+            System.out.println("\n=== LOJA TECH - SISTEMA DE GERENCIAMENTO ===");
             System.out.println("1. Cadastrar Cliente");
             System.out.println("2. Cadastrar Produto");
             System.out.println("3. Realizar Pedido");
@@ -32,8 +33,10 @@ public class Main {
             System.out.println("5. Listar Produtos");
             System.out.println("6. Listar Pedidos");
             System.out.println("7. Relatório de Vendas");
-            System.out.println("8. Relatório Mensal (6 meses)"); // NOVA OPÇÃO
-            System.out.println("9. Gerar Dados Fictícios"); // NOVA OPÇÃO
+            System.out.println("8. Relatório Mensal (6 meses)");
+            System.out.println("9. Gerar Dados Fictícios");
+            System.out.println("10. Importar Produtos de CSV");      // NOVA OPÇÃO
+            System.out.println("11. Salvar Relatório em Arquivo");   // NOVA OPÇÃO
             System.out.println("0. Sair");
             System.out.print("Escolha: ");
 
@@ -48,9 +51,12 @@ public class Main {
                 case 5 -> listarProdutos();
                 case 6 -> listarPedidos();
                 case 7 -> gerarRelatorio();
-                case 8 -> gerarRelatorioMensal(); // NOVO
-                case 9 -> gerarDadosFicticios(); // NOVO
+                case 8 -> gerarRelatorioMensal();
+                case 9 -> gerarDadosFicticios();
+                case 10 -> importarProdutosCSV();    // NOVO
+                case 11 -> salvarRelatorioArquivo(); // NOVO
                 case 0 -> salvarDados();
+                default -> System.out.println("Opção inválida!");
             }
         } while(opcao != 0);
     }
@@ -155,5 +161,55 @@ public class Main {
 
     private static void gerarDadosFicticios() {
         loja.gerarDadosFicticios();
+    }
+
+
+    private static void salvarRelatorioArquivo() {
+        System.out.println("\n=== SALVAR RELATÓRIO EM ARQUIVO ===");
+        System.out.print("Digite o nome do arquivo para salvar (ex: relatorio.txt): ");
+        String arquivo = scanner.nextLine();
+
+        try {
+            loja.salvarRelatorioMensal(arquivo);
+            System.out.println("Relatório salvo com sucesso em: " + arquivo);
+
+
+            System.out.println("\nPreview do arquivo gerado:");
+            try (BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
+                String linha;
+                while ((linha = br.readLine()) != null) {
+                    System.out.println(linha);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar relatório: " + e.getMessage());
+        }
+    }
+
+
+    private static void criarExemploCSV() {
+        try (PrintWriter pw = new PrintWriter(new FileWriter("produtos.csv"))) {
+
+            pw.println("Nome;Preço;Estoque");
+
+            pw.println("Notebook Gamer;4500.00;15");
+            pw.println("Mouse Wireless;150.00;50");
+            pw.println("Teclado Mecânico;350.00;30");
+            pw.println("Monitor 27pol;1200.00;20");
+            pw.println("Webcam Full HD;299.99;40");
+            pw.println("Headphone Bluetooth;599.99;25");
+            pw.println("Tablet Android;899.99;18");
+            pw.println("Impressora Laser;699.99;12");
+
+            System.out.println("✅ Arquivo 'produtos.csv' criado com sucesso!");
+            System.out.println("📋 Conteúdo do arquivo:");
+            System.out.println("Nome;Preço;Estoque");
+            System.out.println("Notebook Gamer;4500.00;15");
+            System.out.println("Mouse Wireless;150.00;50");
+            System.out.println("... e mais produtos");
+
+        } catch (IOException e) {
+            System.out.println("❌ Erro ao criar arquivo exemplo: " + e.getMessage());
+        }
     }
 }

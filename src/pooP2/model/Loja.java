@@ -272,4 +272,6 @@ public class Loja implements Serializable {
             this.pedidos = lojaCarregada.pedidos;
         }
     }
+
+
 }
