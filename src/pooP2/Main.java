@@ -93,7 +93,7 @@ public class Main {
             Cliente cliente = loja.buscarCliente(cpf);
             
             Pedido pedido = new Pedido(cliente);
-            
+
             while(true) {
                 System.out.print("ID do Produto (0 para finalizar): ");
                 int id = scanner.nextInt();
@@ -105,9 +105,9 @@ public class Main {
                 Produto produto = loja.buscarProduto(id);
                 pedido.adicionarItem(produto, quantidade);
             }
-            
+
             loja.adicionarPedido(pedido);
-            System.out.println("Pedido realizado! Total: " + pedido.calcularTotal());
+            System.out.println("Pedido realizado! Total: " + String.format("R$ %.2f", pedido.calcularTotal()));
             
         } catch (ClienteNaoEncontradoException | ProdutoNaoEncontradoException |
                  EstoqueInsuficienteException e) {

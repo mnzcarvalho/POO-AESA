@@ -18,6 +18,7 @@ public class Pedido implements Serializable {
 
     public Pedido(Cliente cliente) {
         this.id = contador++;
+        this.cliente = cliente;
         this.itens = new ArrayList<>();
         this.status = "Pendente";
         this.dataPedido = LocalDate.now();
@@ -82,7 +83,8 @@ public class Pedido implements Serializable {
 
     @Override
     public String toString() {
-        return "Pedido #" + id + " - " + cliente.getNome() +
-                " - " + getDataFormatada() + " - Total: R$" + getTotalFormatado();
+        String nomeCliente = (cliente != null) ? cliente.getNome() : "Cliente não informado";
+        return "Pedido #" + id + " - " + nomeCliente +
+                " - " + getDataFormatada() + " - Total: " + getTotalFormatado();
     }
 }
