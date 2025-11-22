@@ -24,7 +24,7 @@ public class Main {
     private static void exibirMenu() {
         int opcao;
         do {
-            System.out.println("\n=== LOJA MINIMALISTA ===");
+            System.out.println("\n=== LOJA TECH ===");
             System.out.println("1. Cadastrar Cliente");
             System.out.println("2. Cadastrar Produto");
             System.out.println("3. Realizar Pedido");
