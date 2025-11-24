@@ -303,4 +303,36 @@ public class Loja implements Serializable {
         }
     }
 
+    public List<Pessoa> getPessoas() {
+        return new ArrayList<>(pessoas); // Retorna cópia para segurança
+    }
+
+    public List<Produto> getProdutos() {
+        return new ArrayList<>(produtos);
+    }
+
+    public List<Pedido> getPedidos() {
+        return new ArrayList<>(pedidos);
+    }
+
+    public void mostrarEstatisticasObjetos() {
+        System.out.println("\n=== ESTATÍSTICAS DE OBJETOS ===");
+
+        int qtdClientes = 0, qtdFuncionarios = 0, qtdFornecedores = 0;
+        for (Pessoa pessoa : pessoas) {
+            if (pessoa instanceof Cliente) qtdClientes++;
+            else if (pessoa instanceof Funcionario) qtdFuncionarios++;
+            else if (pessoa instanceof Fornecedor) qtdFornecedores++;
+        }
+
+        System.out.println("📊 Pessoas: " + pessoas.size() +
+                " (Clientes: " + qtdClientes +
+                ", Funcionários: " + qtdFuncionarios +
+                ", Fornecedores: " + qtdFornecedores + ")");
+        System.out.println("📦 Produtos: " + produtos.size());
+        System.out.println("🛒 Pedidos: " + pedidos.size());
+        System.out.println("💾 Total de objetos a serem serializados: " +
+                (pessoas.size() + produtos.size() + pedidos.size()));
+    }
+
 }

@@ -1,0 +1,12 @@
+=== RELATÓRIO MENSAL - LOJA TECH ===
+Período: Últimos 6 Meses
+=====================================
+Junho/2025: 14 pedidos - R$  121549,17
+Julho/2025: 12 pedidos - R$   72299,38
+Agosto/2025: 11 pedidos - R$   87699,33
+Setembro/2025: 14 pedidos - R$   74799,24
+Outubro/2025: 14 pedidos - R$   89049,23
+Novembro/2025: 16 pedidos - R$  155649,06
+=====================================
+TOTAL GERAL: 81 pedidos - R$  601045,41
+Relatório gerado em: 2025-11-24

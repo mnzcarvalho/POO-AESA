@@ -4,10 +4,8 @@ import pooP2.exception.CPFInvalidoException;
 import pooP2.exception.ClienteNaoEncontradoException;
 import pooP2.exception.EstoqueInsuficienteException;
 import pooP2.exception.ProdutoNaoEncontradoException;
-import pooP2.model.Cliente;
-import pooP2.model.Loja;
-import pooP2.model.Pedido;
-import pooP2.model.Produto;
+import pooP2.model.*;
+import pooP2.util.Formatador;
 import pooP2.util.ImportadorCSV;
 
 import java.util.*;
@@ -35,8 +33,9 @@ public class Main {
             System.out.println("7. Relatório de Vendas");
             System.out.println("8. Relatório Mensal (6 meses)");
             System.out.println("9. Gerar Dados Fictícios");
-            System.out.println("10. Importar Produtos de CSV");      // NOVA OPÇÃO
-            System.out.println("11. Salvar Relatório em Arquivo");   // NOVA OPÇÃO
+            System.out.println("10. Importar Produtos de CSV");
+            System.out.println("11. Salvar Relatório em Arquivo");
+            System.out.println("12. Mostrar Objetos Salvos");  // NOVA OPÇÃO
             System.out.println("0. Sair");
             System.out.print("Escolha: ");
 
@@ -53,8 +52,9 @@ public class Main {
                 case 7 -> gerarRelatorio();
                 case 8 -> gerarRelatorioMensal();
                 case 9 -> gerarDadosFicticios();
-                case 10 -> importarProdutosCSV();    // NOVO
-                case 11 -> salvarRelatorioArquivo(); // NOVO
+                case 10 -> importarProdutosCSV();
+                case 11 -> salvarRelatorioArquivo();
+                case 12 -> mostrarObjetosSalvos();
                 case 0 -> salvarDados();
                 default -> System.out.println("Opção inválida!");
             }
@@ -247,5 +247,81 @@ public class Main {
             System.out.println("❌ Nenhum produto foi importado.");
             System.out.println("📝 Verifique o formato do arquivo CSV.");
         }
+    }
+
+    private static void mostrarObjetosSalvos() {
+        System.out.println("\n" + "=".repeat(50));
+        System.out.println("🔍 VISUALIZADOR DE OBJETOS SALVOS");
+        System.out.println("=".repeat(50));
+
+
+        loja.mostrarEstatisticasObjetos();
+
+        System.out.println("\n--- 👥 CLIENTES SALVOS ---");
+        boolean temClientes = false;
+        for (Pessoa pessoa : loja.getPessoas()) {
+            if (pessoa instanceof Cliente) {
+                Cliente cliente = (Cliente) pessoa;
+                System.out.println("┌─ Cliente: " + cliente.getNome());
+                System.out.println("├── CPF: " + Formatador.formatarCPF(cliente.getCpf()));
+                System.out.println("├── Email: " + cliente.getEmail());
+                System.out.println("└── Tipo: " + cliente.getTipo());
+                System.out.println();
+                temClientes = true;
+            }
+        }
+        if (!temClientes) {
+            System.out.println("❌ Nenhum cliente cadastrado ainda.");
+            System.out.println("💡 Use a Opção 1 para cadastrar ou Opção 9 para dados fictícios.");
+        }
+
+        System.out.println("--- 📦 PRODUTOS SALVOS ---");
+        if (loja.getProdutos().isEmpty()) {
+            System.out.println("❌ Nenhum produto cadastrado ainda.");
+            System.out.println("💡 Use a Opção 2 para cadastrar ou Opção 9 para dados fictícios.");
+        } else {
+            for (Produto produto : loja.getProdutos()) {
+                System.out.println("┌─ " + produto.getNome());
+                System.out.println("├── ID: " + produto.getId());
+                System.out.println("├── Preço: " + Formatador.formatarMoeda(produto.getPreco()));
+                System.out.println("└── Estoque: " + produto.getEstoque() + " unidades");
+                System.out.println();
+            }
+        }
+
+        System.out.println("--- 🛒 PEDIDOS SALVOS ---");
+        if (loja.getPedidos().isEmpty()) {
+            System.out.println("❌ Nenhum pedido realizado ainda.");
+            System.out.println("💡 Use a Opção 3 para criar pedidos ou Opção 9 para dados fictícios.");
+        } else {
+
+            List<Pedido> pedidosOrdenados = new ArrayList<>(loja.getPedidos());
+            pedidosOrdenados.sort((p1, p2) -> p2.getDataPedido().compareTo(p1.getDataPedido()));
+
+            for (Pedido pedido : pedidosOrdenados) {
+                System.out.println("┌─ Pedido #" + pedido.getId());
+                System.out.println("├── Cliente: " + pedido.getCliente().getNome());
+                System.out.println("├── Data: " + pedido.getDataFormatada());
+                System.out.println("├── Status: " + pedido.getStatus());
+                System.out.println("├── Total: " + pedido.getTotalFormatado());
+                System.out.println("└── Itens: " + pedido.getItens().size() + " produtos");
+
+
+                if (!pedido.getItens().isEmpty()) {
+                    for (ItemPedido item : pedido.getItens()) {
+                        System.out.println("    ↳ " + item.getProduto().getNome() +
+                                " x " + item.getQuantidade() + " = " +
+                                Formatador.formatarMoeda(item.getSubtotal()));
+                    }
+                }
+                System.out.println();
+            }
+        }
+
+        System.out.println("--- 💾 INFORMAÇÕES DE SERIALIZAÇÃO ---");
+        System.out.println("📍 Arquivo de salvamento: loja.dat");
+        System.out.println("📍 Formato: Serialização Java (binário)");
+        System.out.println("📍 Todos os objetos acima serão persistidos automaticamente");
+        System.out.println("=".repeat(50));
     }
 }
