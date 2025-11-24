@@ -273,5 +273,34 @@ public class Loja implements Serializable {
         }
     }
 
+    public void salvarRelatorioMensal(String arquivo) throws IOException {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(arquivo))) {
+            pw.println("=== RELATÓRIO MENSAL - LOJA TECH ===");
+            pw.println("Período: Últimos 6 Meses");
+            pw.println("=====================================");
+
+            LocalDate hoje = LocalDate.now();
+            double totalGeral = 0;
+            int pedidosGeral = 0;
+
+            for (int i = 5; i >= 0; i--) {
+                LocalDate mesRef = hoje.minusMonths(i);
+                int mes = mesRef.getMonthValue();
+                int ano = mesRef.getYear();
+                double totalMes = calcularTotalMes(mes, ano);
+                int qtdPedidosMes = contarPedidosMes(mes, ano);
+
+                totalGeral += totalMes;
+                pedidosGeral += qtdPedidosMes;
+
+                String nomeMes = getNomeMesPortugues(mesRef.getMonth());
+                pw.printf("%s/%d: %2d pedidos - R$ %10.2f%n", nomeMes, ano, qtdPedidosMes, totalMes);
+            }
+
+            pw.println("=====================================");
+            pw.printf("TOTAL GERAL: %2d pedidos - R$ %10.2f%n", pedidosGeral, totalGeral);
+            pw.println("Relatório gerado em: " + LocalDate.now());
+        }
+    }
 
 }

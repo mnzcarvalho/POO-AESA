@@ -1,6 +1,10 @@
 # 🏪 Sistema - Loja TECH
 
+# 💻 Integrantes
 
+### - Eduardo Menezes Carvalho
+### - Wilson Beserra Delgado Filho
+### - Vinicius dos Santos Maneta
 
 ## 💡 Conceitos Implementados
 ## 1. 📊 Estruturas Lógicas

@@ -212,4 +212,40 @@ public class Main {
             System.out.println("❌ Erro ao criar arquivo exemplo: " + e.getMessage());
         }
     }
+
+    private static void importarProdutosCSV() {
+        System.out.println("\n=== IMPORTAR PRODUTOS DE ARQUIVO CSV ===");
+        System.out.println("Formato esperado: Nome;Preço;Estoque");
+        System.out.println("Exemplo: Notebook Gamer;4500.00;15");
+        System.out.print("Digite o nome do arquivo CSV (ex: produtos.csv): ");
+        String arquivo = scanner.nextLine();
+
+        File file = new File(arquivo);
+        if (!file.exists()) {
+            System.out.println("❌ Arquivo não encontrado: " + arquivo);
+            System.out.println("📁 Criando arquivo de exemplo 'produtos.csv'...");
+            criarExemploCSV();
+            System.out.println("✅ Arquivo de exemplo criado!");
+            System.out.println("✏️  Edite o arquivo 'produtos.csv' e importe novamente.");
+            return;
+        }
+
+        System.out.println("📂 Importando produtos de: " + arquivo);
+        List<Produto> produtosImportados = ImportadorCSV.importarProdutosCSV(arquivo);
+
+        if (!produtosImportados.isEmpty()) {
+            for (Produto produto : produtosImportados) {
+                try {
+                    loja.adicionarProduto(produto);
+                } catch (Exception e) {
+                    System.out.println("⚠️  Erro ao adicionar produto: " + e.getMessage());
+                }
+            }
+            System.out.println("✅ " + produtosImportados.size() + " produtos importados com sucesso!");
+            System.out.println("📋 Use a opção 5 para listar todos os produtos.");
+        } else {
+            System.out.println("❌ Nenhum produto foi importado.");
+            System.out.println("📝 Verifique o formato do arquivo CSV.");
+        }
+    }
 }
