@@ -1,6 +1,5 @@
-
-CONSULTAS AVANÇADAS (14)
-Consulta 1 -> Total gasto por cliente no período (JOINs)
+-- CONSULTAS AVANÇADAS (14)
+-- Consulta 1 -> Total gasto por cliente no período (JOINs)
 SELECT clientes.nome AS cliente, SUM(pedidos.total) AS total_gasto
 FROM pedidos
 JOIN clientes ON pedidos.cliente_id = clientes.id
