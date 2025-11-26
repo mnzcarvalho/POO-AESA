@@ -34,6 +34,7 @@ GROUP BY clientes.nome
 ORDER BY total_gasto DESC
 LIMIT 10;
 -- Consulta 6 -> Vendas completas com 5 JOINs (complexa)
+-- Gera um relatório de pedidos com detalhes de itens para o segundo semestre de 2025
 SELECT pedidos.id AS pedido, clientes.nome AS cliente, contas_usuarios.usuario AS usuario, pagamentos.metodo AS pagamento, remessas.transportadora AS transportadora, produtos.nome AS produto, itens_pedido.quantidade, pedidos.total
 FROM pedidos
 JOIN clientes ON pedidos.cliente_id = clientes.id
@@ -95,6 +96,7 @@ GROUP BY clientes.id, clientes.nome
 ORDER BY gasto_total DESC
 LIMIT 50;
 -- Consulta 14 -> Consulta complexa com 6 JOINs (muitos joins)
+-- Gerar um relatório detalhado de pedidos do ano de 2025, incluindo informações do cliente, produtos, categorias, fornecedores, pagamentos e transportadoras.
 SELECT o.id AS pedido, c.nome AS cliente, ua.usuario AS usuario, p.nome AS produto, cat.nome AS categoria, f.nome AS fornecedor, pay.metodo AS pagamento, r.transportadora AS transportadora, o.total AS total_pedido
 FROM pedidos o
 JOIN clientes c ON o.cliente_id = c.id
