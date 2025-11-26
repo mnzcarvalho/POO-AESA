@@ -1,0 +1,17 @@
+-- CONSULTAS AVANÇADAS (14)
+-- Consulta 1 -> Total gasto por cliente no período (JOINs)
+-- Consulta 2 -> Top 10 produtos por faturamento (JOINs)
+-- Consulta 3 -> Pedidos via PIX por cidade (JOINs)
+-- Consulta 4 -> Fornecedores por quantidade fornecida (JOINs)
+-- Consulta 5 -> Clientes que mais compraram (JOINs)
+-- Consulta 6 -> Gera um relatório de pedidos com detalhes de itens para o segundo semestre de 2025
+-- Consulta 7 -> Produtos sem entradas de estoque (LEFT JOIN)
+-- Consulta 9 -> Faturamento por categoria (JOINs)
+-- Consulta 10 -> Fornecedores e produtos fornecidos (1:N)
+-- Consulta 11 -> Pedidos possivelmente atrasados (sem entrega em +7 dias)
+-- Consulta 12 -> Itens mais vendidos por produto e categoria (JOINs)
+-- Consulta 13 -> Performance dos clientes (RFM simplificado)
+-- Consulta 14 -> Gerar um relatório detalhado de pedidos do ano de 2025, incluindo informações do cliente, produtos, categorias, fornecedores, pagamentos e transportadoras.
+
+
+-- Consultas complexas = 6 e 14
