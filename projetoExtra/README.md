@@ -131,13 +131,13 @@ private static final String PASSWORD = "sua_senha_aqui"; // ALTERE AQUI
 3. Configurações de Conexão
    Host: localhost
 
-Porta: 3306 (padrão MySQL)
+   Porta: 3306 (padrão MySQL)
 
-Banco: sistema_clientes
+   Banco: sistema_clientes
 
-Usuário: root (ou outro usuário com privilégios)
+   Usuário: root (ou outro usuário com privilégios)
 
-Senha: [sua senha do MySQL]
+   Senha: [sua senha do MySQL]
 
 ## 🔧 Solução de Problemas de Conexão       
 Erro de acesso negado:
@@ -155,8 +155,8 @@ Baixe o connector MySQL: https://dev.mysql.com/downloads/connector/j/
 Adicione o JAR ao classpath do projeto              
 
 ## 🚀 Como Instalar e Executar                   
-Passo a Passo Completo:             
-Preparar o Ambiente
+Passo a Passo Completo:  **Intellij e Terminal**        
+Terminal:
 ```
 bash
 # Verificar Java
@@ -165,7 +165,7 @@ java -version
 # Verificar MySQL
 mysql --version
 ```
-Configurar Banco de Dados           
+### Configurar Banco de Dados           
 
 Execute o script SQL no MySQL Workbench             
 
