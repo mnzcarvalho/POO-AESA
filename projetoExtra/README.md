@@ -101,6 +101,44 @@ INSERT IGNORE INTO categorias (nome, descricao) VALUES
 ('Regular', 'Clientes comuns'),
 ('Corporate', 'Clientes corporativos');
 ```
+## 🚀 Como Usar Versão Simplificada
+
+### 1. 📥 Baixar o Código
+**Opção A - GitHub ZIP:**
+- Acesse: https://github.com/mnzcarvalho/POO-AESA
+- Clique em **"Code" → "Download ZIP"**
+- Extraia o ZIP em uma pasta
+
+**Opção B - Git Clone:**
+```
+bash
+git clone git@github.com:mnzcarvalho/POO-AESA.git
+cd POO-AESA
+```
+## 2. 🔧 Abrir no IntelliJ
+- Abra o **IntelliJ IDEA**
+- **File** → **Open** → Selecione a pasta do projeto
+- Marque a pasta `projetoExtra` como **Sources Root**:
+   - Clique direito em `projetoExtra`
+   - **Mark Directory as** → **Sources Root**
+
+## 3. 🗄️ Configurar MySQL
+- Instale **MySQL Server** (versão completa)
+- Crie o banco:
+```
+sql
+CREATE DATABASE sistema_clientes;
+```
+## 4. ⚙️ Configurar Conexão
+Edite: `DatabaseConnection.java`:
+```
+private static final String URL = "jdbc:mysql://localhost:3306/sistema_clientes";
+private static final String USER = "root";
+private static final String PASSWORD = "sua_senha_aqui";
+```
+
+## 🚀 Como Usar Versão Completa
+
 ## 🔌 Como Configurar a Conexão com o Banco
 1. Criar o Banco de Dados Via MySQL Workbench:
 
