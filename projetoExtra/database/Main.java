@@ -1,14 +1,10 @@
 package projetoExtra.database;
 
-import projetoExtra.entities.Cliente;
-import projetoExtra.entities.ClientePessoaFisica;
-import projetoExtra.entities.ClientePessoaJuridica;
-import projetoExtra.exceptions.CEPInvalidoException;
-import projetoExtra.exceptions.CPFInvalidoException;
-import projetoExtra.exceptions.ClienteNaoEncontradoException;
-import projetoExtra.services.ClienteService;
-
-
+import projetoExtra.entities.*;
+import projetoExtra.exceptions.InvalidZipCodeException;
+import projetoExtra.exceptions.InvalidCPFException;
+import projetoExtra.exceptions.CustomerNotFoundException;
+import projetoExtra.services.CustomerService;
 
 import java.util.List;
 import java.util.Scanner;
@@ -16,7 +12,7 @@ import java.util.Scanner;
 import static projetoExtra.database.DatabaseConnection.*;
 
 public class Main {
-    private static ClienteService clienteService = new ClienteService();
+    private static CustomerService customerService = new CustomerService();
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -24,50 +20,47 @@ public class Main {
         System.out.println("  SISTEMA DE CADASTRO DE CLIENTES  ");
         System.out.println("====================================\n");
 
-        // Testar conexão com banco de dados
         testConnection();
-
-        // Menu principal
-        exibirMenuPrincipal();
+        showMainMenu();
     }
 
-    private static void exibirMenuPrincipal() {
-        int opcao;
-
-        // Estruturas lógicas: do-while para menu principal
+    private static void showMainMenu() {
+        int option;
         do {
             System.out.println("\n=== MENU PRINCIPAL ===");
             System.out.println("1. Cadastrar Cliente");
             System.out.println("2. Listar Clientes");
             System.out.println("3. Buscar Cliente por Nome");
-            System.out.println("4. Adicionar Endereço por CEP");
-            System.out.println("5. Fazer Backup dos Dados");
-            System.out.println("6. Restaurar Backup");
+            System.out.println("4. Remover Cliente");
+            System.out.println("5. Adicionar Endereço por CEP");
+            System.out.println("6. Fazer Backup dos Dados");
+            System.out.println("7. Restaurar Backup");
             System.out.println("0. Sair");
             System.out.print("Escolha uma opção: ");
 
             try {
-                opcao = Integer.parseInt(scanner.nextLine());
-
-                // Estruturas lógicas: switch para opções do menu
-                switch (opcao) {
+                option = Integer.parseInt(scanner.nextLine());
+                switch (option) {
                     case 1:
-                        cadastrarCliente();
+                        registerCustomer();
                         break;
                     case 2:
-                        clienteService.listarClientes();
+                        customerService.listCustomers();
                         break;
                     case 3:
-                        buscarClientePorNome();
+                        searchCustomerByName();
                         break;
                     case 4:
-                        adicionarEnderecoPorCEP();
+                        deleteCustomer();
                         break;
                     case 5:
-                        fazerBackup();
+                        addAddressByZipCode();
                         break;
                     case 6:
-                        restaurarBackup();
+                        makeBackup();
+                        break;
+                    case 7:
+                        restoreBackup();
                         break;
                     case 0:
                         System.out.println("👋 Obrigado por usar o sistema! Até logo!");
@@ -77,21 +70,75 @@ public class Main {
                 }
             } catch (NumberFormatException e) {
                 System.out.println("❌ Por favor, digite um número válido.");
-                opcao = -1;
-            } catch (Exception e) {
-                System.out.println("❌ Erro: " + e.getMessage());
-                opcao = -1;
+                option = -1;
             }
-
-        } while (opcao != 0);
-
+        } while (option != 0);
         scanner.close();
     }
 
-    private static void cadastrarCliente() {
-        System.out.println("\n=== CADASTRAR CLIENTE ===");
+    private static void deleteCustomer() {
+        System.out.println("\n=== REMOVER CLIENTE ===");
+        System.out.println("1. Remover por ID");
+        System.out.println("2. Remover por Nome");
+        System.out.println("3. Voltar");
+        System.out.print("Escolha uma opção: ");
 
-        // Estruturas lógicas: switch para tipo de cliente
+        try {
+            int option = Integer.parseInt(scanner.nextLine());
+
+            switch (option) {
+                case 1:
+                    deleteCustomerById();
+                    break;
+                case 2:
+                    deleteCustomerByName();
+                    break;
+                case 3:
+                    return;
+                default:
+                    System.out.println("❌ Opção inválida!");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("❌ Por favor, digite um número válido.");
+        }
+    }
+
+    private static void deleteCustomerById() {
+        try {
+            customerService.listCustomers();
+            System.out.print("\nDigite o ID do cliente que deseja remover: ");
+            int customerId = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("⚠️  Tem certeza que deseja remover este cliente? (s/n): ");
+            String confirmation = scanner.nextLine();
+
+            if (confirmation.equalsIgnoreCase("s")) {
+                customerService.deleteCustomer(customerId);
+            } else {
+                System.out.println("Operação cancelada.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("❌ Por favor, digite um ID válido.");
+        } catch (CustomerNotFoundException e) {
+            System.out.println("❌ " + e.getMessage());
+        }
+    }
+
+    private static void deleteCustomerByName() {
+        System.out.print("Digite o nome do cliente que deseja remover: ");
+        String name = scanner.nextLine();
+
+        if (name == null || name.trim().isEmpty()) {
+            System.out.println("❌ Por favor, digite um nome para buscar.");
+            return;
+        }
+
+        customerService.deleteCustomerByName(name);
+    }
+
+
+    private static void registerCustomer() {
+        System.out.println("\n=== CADASTRAR CLIENTE ===");
         System.out.println("Tipo de Cliente:");
         System.out.println("1. Pessoa Física");
         System.out.println("2. Pessoa Jurídica");
@@ -100,68 +147,50 @@ public class Main {
         try {
             int tipo = Integer.parseInt(scanner.nextLine());
 
-            // Coletar dados comuns
             System.out.print("Nome: ");
             String nome = scanner.nextLine();
-
             System.out.print("Email: ");
             String email = scanner.nextLine();
-
             System.out.print("Telefone: ");
             String telefone = scanner.nextLine();
 
-            Cliente cliente;
+            Customer customer;
 
             switch (tipo) {
                 case 1:
-                    // Cadastro Pessoa Física
                     System.out.print("CPF: ");
                     String cpf = scanner.nextLine();
-
-                    cliente = new ClientePessoaFisica(nome, email, telefone, cpf);
-
-                    // Validar CPF
+                    customer = new IndividualCustomer(nome, email, telefone, cpf);
                     try {
-                        ((ClientePessoaFisica) cliente).validarDocumento();
-                    } catch (CPFInvalidoException e) {
+                        ((IndividualCustomer) customer).validateDocument();
+                    } catch (InvalidCPFException e) {
                         System.out.println("❌ Erro no CPF: " + e.getMessage());
                         return;
                     }
                     break;
-
                 case 2:
-                    // Cadastro Pessoa Jurídica
                     System.out.print("CNPJ: ");
                     String cnpj = scanner.nextLine();
-
                     System.out.print("Razão Social: ");
                     String razaoSocial = scanner.nextLine();
-
-                    cliente = new ClientePessoaJuridica(nome, email, telefone, cnpj, razaoSocial);
-
-                    // Validar CNPJ
+                    customer = new BusinessCustomer(nome, email, telefone, cnpj, razaoSocial);
                     try {
-                        ((ClientePessoaJuridica) cliente).validarDocumento();
+                        ((BusinessCustomer) customer).validateDocument();
                     } catch (Exception e) {
                         System.out.println("❌ Erro no CNPJ: " + e.getMessage());
                         return;
                     }
                     break;
-
                 default:
                     System.out.println("❌ Tipo de cliente inválido!");
                     return;
             }
 
-            // Adicionar cliente ao sistema
-            clienteService.adicionarCliente(cliente);
-
-            // Perguntar se deseja adicionar endereço
+            customerService.addCustomer(customer);
             System.out.print("\nDeseja adicionar um endereço? (s/n): ");
             String resposta = scanner.nextLine();
-
             if (resposta.equalsIgnoreCase("s")) {
-                adicionarEnderecoCliente(cliente.getId());
+                addCustomerAddress(customer.getId());
             }
 
         } catch (NumberFormatException e) {
@@ -171,41 +200,32 @@ public class Main {
         }
     }
 
-    private static void adicionarEnderecoCliente(int clienteId) {
+    private static void addCustomerAddress(int customerId) {
         System.out.println("\n=== ADICIONAR ENDEREÇO ===");
-
         try {
             System.out.print("CEP: ");
             String cep = scanner.nextLine();
-
             System.out.print("Número: ");
             String numero = scanner.nextLine();
-
             System.out.print("Complemento: ");
             String complemento = scanner.nextLine();
-
-            clienteService.adicionarEnderecoPorCEP(clienteId, cep, numero, complemento);
-
-        } catch (ClienteNaoEncontradoException e) {
+            customerService.addAddressByZipCode(customerId, cep, numero, complemento);
+        } catch (CustomerNotFoundException e) {
             System.out.println("❌ " + e.getMessage());
-        } catch (CEPInvalidoException e) {
+        } catch (InvalidZipCodeException e) {
             System.out.println("❌ " + e.getMessage());
         } catch (Exception e) {
             System.out.println("❌ Erro ao adicionar endereço: " + e.getMessage());
         }
     }
 
-    private static void adicionarEnderecoPorCEP() {
+    private static void addAddressByZipCode() {
         System.out.println("\n=== ADICIONAR ENDEREÇO POR CEP ===");
-
         try {
-            clienteService.listarClientes();
-
+            customerService.listCustomers();
             System.out.print("ID do Cliente: ");
-            int clienteId = Integer.parseInt(scanner.nextLine());
-
-            adicionarEnderecoCliente(clienteId);
-
+            int customerId = Integer.parseInt(scanner.nextLine());
+            addCustomerAddress(customerId);
         } catch (NumberFormatException e) {
             System.out.println("❌ Por favor, digite um ID válido.");
         } catch (Exception e) {
@@ -213,62 +233,53 @@ public class Main {
         }
     }
 
-    private static void buscarClientePorNome() {
+    private static void searchCustomerByName() {
         System.out.println("\n=== BUSCAR CLIENTE POR NOME ===");
-
         System.out.print("Digite o nome (ou parte dele): ");
         String nome = scanner.nextLine();
 
-        // Estruturas lógicas: if para verificar se o nome não está vazio
         if (nome == null || nome.trim().isEmpty()) {
             System.out.println("❌ Por favor, digite um nome para buscar.");
             return;
         }
 
-        List<Cliente> resultados = clienteService.buscarClientesPorNome(nome);
+        List<Customer> resultados = customerService.searchCustomersByName(nome);
 
-        // Estruturas lógicas: if-else para mostrar resultados
         if (resultados.isEmpty()) {
             System.out.println("🔍 Nenhum cliente encontrado com o nome: " + nome);
         } else {
             System.out.println("\n=== RESULTADOS DA BUSCA ===");
             for (int i = 0; i < resultados.size(); i++) {
-                Cliente cliente = resultados.get(i);
-                System.out.println((i + 1) + ". " + cliente.toString());
-                System.out.println("   " + cliente.getInformacoesContato());
+                Customer customer = resultados.get(i);
+                System.out.println((i + 1) + ". " + customer.toString());
+                System.out.println("   " + customer.getContactInfo());
 
-                // Mostrar primeiro endereço se existir
-                if (!cliente.getEnderecos().isEmpty()) {
-                    System.out.println("   Endereço: " + cliente.getEnderecos().get(0));
+                if (!customer.getAddresses().isEmpty()) {
+                    System.out.println("   Endereço: " + customer.getAddresses().get(0));
                 }
                 System.out.println();
             }
         }
     }
 
-    private static void fazerBackup() {
+    private static void makeBackup() {
         System.out.println("\n=== FAZER BACKUP ===");
-
         System.out.print("Nome do arquivo de backup (ex: backup_clientes.dat): ");
         String arquivo = scanner.nextLine();
 
-        // Estruturas lógicas: if para validar nome do arquivo
         if (arquivo == null || arquivo.trim().isEmpty()) {
             arquivo = "backup_clientes.dat";
             System.out.println("Usando nome padrão: " + arquivo);
         }
-
-        clienteService.fazerBackup(arquivo);
+        customerService.makeBackup(arquivo);
     }
 
-    private static void restaurarBackup() {
+    private static void restoreBackup() {
         System.out.println("\n=== RESTAURAR BACKUP ===");
-
         System.out.println("⚠️  ATENÇÃO: Esta ação substituirá os dados atuais!");
         System.out.print("Deseja continuar? (s/n): ");
         String confirmacao = scanner.nextLine();
 
-        // Estruturas lógicas: if para confirmação
         if (!confirmacao.equalsIgnoreCase("s")) {
             System.out.println("Operação cancelada.");
             return;
@@ -281,7 +292,6 @@ public class Main {
             System.out.println("❌ Nome do arquivo inválido.");
             return;
         }
-
-        clienteService.restaurarBackup(arquivo);
+        customerService.restoreBackup(arquivo);
     }
 }
